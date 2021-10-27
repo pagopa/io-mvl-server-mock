@@ -1,3 +1,2 @@
-// TODO: write you code here
-
-process.stdout.write("Hello world");
+// eslint-disable-next-line no-console
+console.log("HELLO WORLD");
