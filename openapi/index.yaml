@@ -1,221 +1,197 @@
-openapi: 3.0.0
 info:
-  title: "RAW"
-  version: "1"
-servers:
-  - url: "https://mvlservermock/api/v1"
-components:
-  securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-  schemas:
-    LegalMessage:
-      type: object
-      properties:
-        eml: 
-          $ref: "#/components/schemas/LegalMessageEml"
-        cert_data:
-          $ref: "#/components/schemas/LegalMessageCertData"
-      required: 
-        - eml
-        - cert_data
-    LegalMessageEml:
-      type: object
-      properties:
-        subject:
-          type: string
-        plain_text_content:
-          type: string
-        html_content:
-          type: string
-        attachments:
-          type: array
-          items:
-            $ref: '#/components/schemas/Attachment'
-      required:
-        - subject
-        - plain_text_content
-        - html_content
-        - attachments
-    LegalMessageCertData:
-      type: object
-      properties:
-        header:
-          $ref: "#/components/schemas/CertDataHeader"
-        data:
-          $ref: "#/components/schemas/CertData"
-      required:
-        - header
-        - data
-    CertData:
-      type: object
-      properties:
-        sender_provider:
-          type: string
-          minLength: 1
-        timestamp:
-          type: string
-          format: date-time
-        envelope_id:
-          type: string
-          minLength: 1
-        msg_id:
-          type: string
-          minLength: 1
-        receipt_type:
-          type: string
-      required:
-        - sender_provider
-        - timestamp
-        - envelope_id
-        - msg_id
-        - receipt_type
-    CertDataHeader:
-      type: object
-      properties:
-        sender:
-          type: string
-          minLength: 1
-        recipients:
-          type: string
-          minLength: 1
-        replies:
-          type: string
-          minLength: 1
-        object:
-          type: string
-          minLength: 1
-    Attachment:
-      type: object
-      properties:
-        id:
-          type: string
-        content_type:
-          type: string
-        name:
-          type: string
-        url:
-          type: string
+  title: RAW
+  version: '1'
 paths:
-  /createInbox:
-    put:
-      summary: "Create an inbox for the provided fiscal code"
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                fiscal_code: 
-                  type: string
-      responses:
-        204:
-          description: "Success"
-        400:
-          description: "Bad Request"
-        401:
-          description: "Unauthorized"
-        403:
-          description: "Forbidden"
-        429:
-          description: "Too Many Requests"
-        500:
-          description: "Internal Server Error"
   /messages/{id}:
     get:
-      summary: "Retrieve a legal message"
+      summary: Retrieve a legal message
       security:
-       - bearerAuth: []
+      - bearerAuth: []
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
+      - name: id
+        in: path
+        required: true
+        type: string
       responses:
-        200:
-          description: "Success"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/LegalMessage"
-        400:
-          description: "Bad Request"
-        401:
-          description: "Unauthorized"
-        403:
-          description: "Forbidden"
-        429:
-          description: "Too Many Requests"
-        500:
-          description: "Internal Server Error"
+        '200':
+          description: Success
+          schema:
+            "$ref": "#/definitions/LegalMessage"
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: Too Many Requests
+        '500':
+          description: Internal Server Error
+      produces:
+      - application/json
   /messages/{id}/{format}:
     get:
-      summary: "Retrieve the original part of a legal message"
+      summary: Retrieve the original part of a legal message
       security:
-       - bearerAuth: []
+      - bearerAuth: []
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: format
-          in: path
-          schema:
-            type: string
-            enum: [eml, smime, daticert]
+      - name: id
+        in: path
+        required: true
+        type: string
+      - name: format
+        in: path
+        enum:
+        - eml
+        - smime
+        - daticert
+        type: string
       responses:
-        200:
-          description: "Success"
-          content:
-            text/plain:
-              schema:
-                type: string
-        400:
-          description: "Bad Request"
-        401:
-          description: "Unauthorized"
-        403:
-          description: "Forbidden"
-        429:
-          description: "Too Many Requests"
-        500:
-          description: "Internal Server Error"
+        '200':
+          description: Success
+          schema:
+            type: string
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: Too Many Requests
+        '500':
+          description: Internal Server Error
+      produces:
+      - text/plain
   /messages/{id}/attachments/{attachment_id}:
     get:
-      summary: "Retrieve an attachment of a legal message"
+      summary: Retrieve an attachment of a legal message
       security:
-       - bearerAuth: []
+      - bearerAuth: []
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: attachment_id
-          in: path
-          required: true
-          schema:
-            type: string
+      - name: id
+        in: path
+        required: true
+        type: string
+      - name: attachment_id
+        in: path
+        required: true
+        type: string
       responses:
-        200:
-          description: "Success"
-          content:
-            application/octet-stream:
-              schema:
-                type: string
-                format: binary
-        400:
-          description: "Bad Request"
-        401:
-          description: "Unauthorized"
-        403:
-          description: "Forbidden"
-        429:
-          description: "Too Many Requests"
-        500:
-          description: "Internal Server Error"
+        '200':
+          description: Success
+          schema:
+            type: string
+            format: binary
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '429':
+          description: Too Many Requests
+        '500':
+          description: Internal Server Error
+      produces:
+      - application/octet-stream
+swagger: '2.0'
+host: mvlservermock
+schemes:
+- https
+basePath: "/api/v1"
+definitions:
+  LegalMessage:
+    type: object
+    properties:
+      eml:
+        "$ref": "#/definitions/LegalMessageEml"
+      cert_data:
+        "$ref": "#/definitions/LegalMessageCertData"
+    required:
+    - eml
+    - cert_data
+  LegalMessageEml:
+    type: object
+    properties:
+      subject:
+        type: string
+      plain_text_content:
+        type: string
+      html_content:
+        type: string
+      attachments:
+        type: array
+        items:
+          "$ref": "#/definitions/Attachment"
+    required:
+    - subject
+    - plain_text_content
+    - html_content
+    - attachments
+  LegalMessageCertData:
+    type: object
+    properties:
+      header:
+        "$ref": "#/definitions/CertDataHeader"
+      data:
+        "$ref": "#/definitions/CertData"
+    required:
+    - header
+    - data
+  CertData:
+    type: object
+    properties:
+      sender_provider:
+        type: string
+        minLength: 1
+      timestamp:
+        type: string
+        format: date-time
+      envelope_id:
+        type: string
+        minLength: 1
+      msg_id:
+        type: string
+        minLength: 1
+      receipt_type:
+        type: string
+    required:
+    - sender_provider
+    - timestamp
+    - envelope_id
+    - msg_id
+    - receipt_type
+  CertDataHeader:
+    type: object
+    properties:
+      sender:
+        type: string
+        minLength: 1
+      recipients:
+        type: string
+        minLength: 1
+      replies:
+        type: string
+        minLength: 1
+      object:
+        type: string
+        minLength: 1
+  Attachment:
+    type: object
+    properties:
+      id:
+        type: string
+      content_type:
+        type: string
+      name:
+        type: string
+      url:
+        type: string
+securityDefinitions:
+  bearerAuth:
+    type: apiKey
+    name: Authorization
+    in: header
+x-components: {}
+
