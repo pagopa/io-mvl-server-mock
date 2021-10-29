@@ -29,23 +29,24 @@ paths:
           description: Internal Server Error
       produces:
       - application/json
-  /messages/{id}/{format}:
+  /messages/{id}/format/{format}:
     get:
       summary: Retrieve the original part of a legal message
       security:
       - bearerAuth: []
       parameters:
-      - name: id
-        in: path
-        required: true
-        type: string
-      - name: format
-        in: path
-        enum:
-        - eml
-        - smime
-        - daticert
-        type: string
+        - name: id
+          in: path
+          required: true
+          type: string
+        - name: format
+          required: true
+          in: path
+          enum:
+          - eml
+          - smime
+          - daticert
+          type: string
       responses:
         '200':
           description: Success

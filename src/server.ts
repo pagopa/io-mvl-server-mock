@@ -1,6 +1,10 @@
 import { IncomingMessage, Server, ServerResponse } from "http";
 import { fastify, FastifyInstance } from "fastify";
-import { getLegalMessageHandler } from "./handlers/message";
+import {
+  getLegalMessageAttachmentHandler,
+  getLegalMessageFormatHandler,
+  getLegalMessageHandler
+} from "./handlers/message";
 import { getConfigOrThrow } from "./utils/config";
 
 // eslint-disable-next-line no-console
@@ -18,6 +22,14 @@ const server: FastifyInstance<
 > = fastify({});
 
 server.get("/messages/:id", {}, getLegalMessageHandler());
+
+server.get("/messages/:id/format/:format", {}, getLegalMessageFormatHandler());
+
+server.get(
+  "/messages/:id/attachments/:attachment_id",
+  {},
+  getLegalMessageAttachmentHandler()
+);
 
 server.listen(config.SERVER_PORT, "0.0.0.0", (err, address) => {
   if (err) {
